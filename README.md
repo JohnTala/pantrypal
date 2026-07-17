@@ -1,7 +1,4 @@
-<<<<<<< HEAD
 
-=======
->>>>>>> feature/user-auth
 # PantryPal
 
 PantryPal is a web application that helps individuals and families manage their pantry inventory, track food expiration dates, and reduce food waste through timely reminders.
