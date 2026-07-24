@@ -1,23 +1,66 @@
+// components/layout/Navbar.tsx
+
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { HiOutlineBars3, HiOutlineXMark } from "react-icons/hi2";
 
 const navLinks = [
-  { href: "/", label: "Home" },
-  { href: "/dashboard", label: "Dashboard" },
-  { href: "/pantry", label: "Pantry" },
-  { href: "/reminders", label: "Reminders" },
+  { href: "#home", label: "Home" },
+  { href: "#how-it-works", label: "How It Works" },
+  { href: "#benefits", label: "Benefits" },
 ];
 
 export default function Navbar() {
   const pathname = usePathname();
-
   const [isOpen, setIsOpen] = useState(false);
+  const [activeSection, setActiveSection] = useState("home");
 
-  const isActive = (href: string) => pathname === href;
+  // Only hide on dashboard routes
+  if (pathname?.startsWith("/dashboard")) {
+    return null;
+  }
+
+  // Handle scroll to section
+  const handleScroll = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
+    e.preventDefault();
+    const targetId = href.replace("#", "");
+    const element = document.getElementById(targetId);
+    if (element) {
+      element.scrollIntoView({ behavior: "smooth" });
+      setIsOpen(false);
+    }
+  };
+
+  // Track active section on scroll
+  useEffect(() => {
+    const handleScroll = () => {
+      const sections = ["home", "how-it-works", "benefits"];
+      const scrollPosition = window.scrollY + 100;
+
+      for (const section of sections) {
+        const element = document.getElementById(section);
+        if (element) {
+          const offsetTop = element.offsetTop;
+          const offsetBottom = offsetTop + element.offsetHeight;
+          if (scrollPosition >= offsetTop && scrollPosition < offsetBottom) {
+            setActiveSection(section);
+            break;
+          }
+        }
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  const isActive = (href: string) => {
+    const section = href.replace("#", "");
+    return activeSection === section;
+  };
 
   return (
     <header className="sticky top-0 z-50 border-b border-slate-200 bg-white shadow-sm">
@@ -25,25 +68,26 @@ export default function Navbar() {
         {/* Logo */}
         <Link
           href="/"
-          className="text-2xl font-bold tracking-tight text-green-600 transition hover:text-green-700"
+          className="text-2xl font-bold tracking-tight text-emerald-600 transition hover:text-emerald-700"
         >
-          PantryPal
+          🥫 PantryPal
         </Link>
 
         {/* Desktop Navigation */}
         <div className="hidden items-center gap-6 md:flex">
           {navLinks.map((link) => (
-            <Link
+            <a
               key={link.href}
               href={link.href}
-              className={`transition-colors ${
+              onClick={(e) => handleScroll(e, link.href)}
+              className={`transition-colors cursor-pointer ${
                 isActive(link.href)
-                  ? "font-semibold text-green-600"
-                  : "text-slate-700 hover:text-green-600"
+                  ? "font-semibold text-emerald-600"
+                  : "text-slate-700 hover:text-emerald-600"
               }`}
             >
               {link.label}
-            </Link>
+            </a>
           ))}
         </div>
 
@@ -51,14 +95,14 @@ export default function Navbar() {
         <div className="hidden items-center gap-3 md:flex">
           <Link
             href="/login"
-            className="rounded-md border border-green-600 px-4 py-2 text-sm font-medium text-green-600 transition hover:bg-green-50"
+            className="rounded-md border border-emerald-600 px-4 py-2 text-sm font-medium text-emerald-600 transition hover:bg-emerald-50"
           >
             Login
           </Link>
 
           <Link
             href="/register"
-            className="rounded-md bg-green-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-green-700"
+            className="rounded-md bg-emerald-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-emerald-700"
           >
             Register
           </Link>
@@ -84,25 +128,25 @@ export default function Navbar() {
         <div className="border-t border-slate-200 bg-white md:hidden">
           <div className="flex flex-col px-4 py-3">
             {navLinks.map((link) => (
-              <Link
+              <a
                 key={link.href}
                 href={link.href}
-                onClick={() => setIsOpen(false)}
-                className={`rounded-md px-3 py-2 transition ${
+                onClick={(e) => handleScroll(e, link.href)}
+                className={`rounded-md px-3 py-2 transition cursor-pointer ${
                   isActive(link.href)
-                    ? "bg-green-50 font-semibold text-green-600"
+                    ? "bg-emerald-50 font-semibold text-emerald-600"
                     : "text-slate-700 hover:bg-slate-100"
                 }`}
               >
                 {link.label}
-              </Link>
+              </a>
             ))}
 
             <div className="mt-4 flex gap-3">
               <Link
                 href="/login"
                 onClick={() => setIsOpen(false)}
-                className="flex-1 rounded-md border border-green-600 px-4 py-2 text-center text-sm font-medium text-green-600 transition hover:bg-green-50"
+                className="flex-1 rounded-md border border-emerald-600 px-4 py-2 text-center text-sm font-medium text-emerald-600 transition hover:bg-emerald-50"
               >
                 Login
               </Link>
@@ -110,7 +154,7 @@ export default function Navbar() {
               <Link
                 href="/register"
                 onClick={() => setIsOpen(false)}
-                className="flex-1 rounded-md bg-green-600 px-4 py-2 text-center text-sm font-medium text-white transition hover:bg-green-700"
+                className="flex-1 rounded-md bg-emerald-600 px-4 py-2 text-center text-sm font-medium text-white transition hover:bg-emerald-700"
               >
                 Register
               </Link>

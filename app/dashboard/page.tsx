@@ -1,122 +1,145 @@
-
+// app/dashboard/page.tsx
 
 import Link from "next/link";
+import { getDashboardData } from "@/lib/dashboard";
 
-const stats = [
-  {
-    title: "Total Items",
-    value: 24,
-    color: "bg-green-100 text-green-700",
-  },
-  {
-    title: "Expiring Soon",
-    value: 5,
-    color: "bg-yellow-100 text-yellow-700",
-  },
-  {
-    title: "Expired Items",
-    value: 2,
-    color: "bg-red-100 text-red-700",
-  },
-];
+export default async function DashboardPage() {
+  // This will be replaced with real data from your database
+  const data = await getDashboardData();
 
-const recentItems = [
-  {
-    name: "Milk",
-    category: "Dairy",
-    expires: "2026-07-20",
-  },
-  {
-    name: "Bread",
-    category: "Bakery",
-    expires: "2026-07-19",
-  },
-  {
-    name: "Rice",
-    category: "Grains",
-    expires: "2027-01-15",
-  },
-];
-
-export default function DashboardPage() {
   return (
-    <section className="space-y-10">
-      {/* Page Header */}
-      <div>
-        <h1 className="text-4xl font-bold text-green-600">Dashboard</h1>
-        <p className="mt-2 text-slate-600">
-          Welcome to PantryPal. Here's a quick overview of your pantry.
-        </p>
+    <div>
+      {/* Stats Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        <DashboardCard
+          title="Total Items"
+          value={data.totalItems}
+          icon="📦"
+          color="bg-emerald-50"
+        />
+        <DashboardCard
+          title="Expiring Soon"
+          value={data.expiringSoon}
+          icon="⚠️"
+          color="bg-amber-50"
+          subtitle={`${data.expiringSoon} items need attention`}
+        />
+        <DashboardCard
+          title="Expired"
+          value={data.expiredItems}
+          icon="❌"
+          color="bg-red-50"
+          subtitle="Time to clean out!"
+        />
       </div>
 
-      {/* Statistics */}
-      <div className="grid gap-6 md:grid-cols-3">
-        {stats.map((stat) => (
-          <div
-            key={stat.title}
-            className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm"
-          >
-            <p className="text-sm font-medium text-slate-500">
-              {stat.title}
-            </p>
-
-            <div
-              className={`mt-4 inline-flex rounded-lg px-4 py-2 text-3xl font-bold ${stat.color}`}
-            >
-              {stat.value}
-            </div>
-          </div>
-        ))}
-      </div>
-
-      {/* Recent Pantry Items */}
-      <div className="rounded-xl border border-slate-200 bg-white shadow-sm">
-        <div className="border-b border-slate-200 px-6 py-4">
-          <h2 className="text-xl font-semibold text-slate-800">
-            Recently Added Items
+      {/* Two Column Layout */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* Expiring Soon List */}
+        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+          <h2 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+            <span className="mr-2">🔔</span>
+            Expiring Soon
           </h2>
-        </div>
-
-        <div className="divide-y divide-slate-200">
-          {recentItems.map((item) => (
-            <div
-              key={item.name}
-              className="flex flex-col justify-between gap-4 px-6 py-4 md:flex-row md:items-center"
-            >
-              <div>
-                <h3 className="font-semibold text-slate-800">
-                  {item.name}
-                </h3>
-
-                <p className="text-sm text-slate-500">
-                  Category: {item.category}
-                </p>
-              </div>
-
-              <span className="rounded-full bg-green-100 px-3 py-1 text-sm font-medium text-green-700">
-                Expires: {item.expires}
-              </span>
+          
+          {data.expiringItems.length === 0 ? (
+            <p className="text-gray-500 text-center py-8">
+              No items expiring soon! 🎉
+            </p>
+          ) : (
+            <div className="space-y-3">
+              {data.expiringItems.map((item) => (
+                <div
+                  key={item.id}
+                  className="flex justify-between items-center p-3 bg-amber-50 rounded-lg border border-amber-200"
+                >
+                  <div>
+                    <p className="font-medium text-gray-900">{item.name}</p>
+                    <p className="text-sm text-gray-600">
+                      Qty: {item.quantity} • Expires in {item.daysLeft} day{item.daysLeft !== 1 ? 's' : ''}
+                    </p>
+                  </div>
+                  <span className="text-sm font-medium text-amber-700">
+                    {item.daysLeft === 0 ? 'Today!' : `${item.daysLeft}d`}
+                  </span>
+                </div>
+              ))}
             </div>
-          ))}
+          )}
+        </div>
+
+        {/* Recent Items */}
+        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+          <h2 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+            <span className="mr-2">🕐</span>
+            Recently Added
+          </h2>
+          
+          {data.recentItems.length === 0 ? (
+            <div className="text-center py-8">
+              <p className="text-gray-500">No items yet</p>
+              <Link
+                href="/pantry/new"
+                className="text-emerald-600 hover:text-emerald-700 font-medium text-sm mt-2 inline-block"
+              >
+                Add your first item →
+              </Link>
+            </div>
+          ) : (
+            <div className="space-y-3">
+              {data.recentItems.map((item) => (
+                <div
+                  key={item.id}
+                  className="flex justify-between items-center p-3 bg-gray-50 rounded-lg border border-gray-200"
+                >
+                  <div>
+                    <p className="font-medium text-gray-900">{item.name}</p>
+                    <p className="text-sm text-gray-600">
+                      Qty: {item.quantity} • Expires: {new Date(item.expiresAt).toLocaleDateString()}
+                    </p>
+                  </div>
+                  <Link
+                    href={`/pantry/${item.id}`}
+                    className="text-emerald-600 hover:text-emerald-700 text-sm"
+                  >
+                    View →
+                  </Link>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       </div>
+    </div>
+  );
+}
 
-      {/* Quick Actions */}
-      <div className="flex flex-col gap-4 sm:flex-row">
-        <Link
-          href="/pantry"
-          className="rounded-lg bg-green-600 px-6 py-3 text-center font-medium text-white transition hover:bg-green-700"
-        >
-          View Pantry
-        </Link>
-
-        <Link
-          href="/reminders"
-          className="rounded-lg border border-green-600 px-6 py-3 text-center font-medium text-green-600 transition hover:bg-green-50"
-        >
-          View Reminders
-        </Link>
+// Helper Component for Dashboard Cards
+function DashboardCard({ 
+  title, 
+  value, 
+  icon, 
+  color, 
+  subtitle 
+}: { 
+  title: string; 
+  value: number; 
+  icon: string; 
+  color: string;
+  subtitle?: string;
+}) {
+  return (
+    <div className={`${color} rounded-xl p-6 border border-gray-200`}>
+      <div className="flex items-center justify-between">
+        <div>
+          <p className="text-sm font-medium text-gray-600">{title}</p>
+          <p className="text-3xl font-bold text-gray-900 mt-1">{value}</p>
+          {subtitle && (
+            <p className="text-sm text-gray-600 mt-1">{subtitle}</p>
+          )}
+        </div>
+        <span className="text-3xl">{icon}</span>
       </div>
-    </section>
+    </div>
   );
 }
