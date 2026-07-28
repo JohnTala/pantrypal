@@ -14,6 +14,7 @@ import {
   HiOutlineMagnifyingGlass,
   HiOutlineSquares2X2,
   HiOutlineCog6Tooth,
+  HiOutlineHome, // ✅ Added this - was missing
 } from "react-icons/hi2";
 
 export default function DashboardHeader() {
