@@ -24,8 +24,8 @@ export default async function DashboardPage() {
         </h1>
 
         <p className="mt-2 text-slate-600">
-          Welcome back, {session.user.name}. Here's a quick overview of your pantry.
-        </p>
+         Welcome back, {session.user.name}. Here&apos;s a quick overview of your pantry.
+      </p>
       </div>
 
       <DashboardSummary items={pantryItems} />
