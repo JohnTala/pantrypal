@@ -6,7 +6,7 @@ export default function ProfilePage() {
       </h1>
 
       <p className="mt-2 text-slate-600">
-        This page will display the user's profile information.
+        This page will display the User&apos;s profile information.
       </p>
     </section>
   );
