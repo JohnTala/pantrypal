@@ -1,22 +1,53 @@
 import mongoose from "mongoose";
 
-const MONGODB_URI = process.env.MONGODB_URI!;
+const MONGODB_URI = process.env.MONGODB_URI;
 
 if (!MONGODB_URI) {
-  throw new Error("Please define the MONGODB_URI environment variable.");
+  throw new Error(
+    "Please define the MONGODB_URI environment variable in .env.local",
+  );
 }
 
-export async function connectDB() {
-  if (mongoose.connection.readyState >= 1) {
-    console.log(` MongoDB ${mongoose.connection.db?.databaseName} is already connected.`);
-    return;
+const mongoUri: string = MONGODB_URI;
+
+interface MongooseCache {
+  conn: typeof mongoose | null;
+  promise: Promise<typeof mongoose> | null;
+}
+
+const globalForMongoose = globalThis as unknown as {
+  mongoose: MongooseCache;
+};
+
+const cached = globalForMongoose.mongoose || {
+  conn: null,
+  promise: null,
+};
+
+globalForMongoose.mongoose = cached;
+
+export async function connectDB(): Promise<typeof mongoose> {
+  if (cached.conn) {
+    return cached.conn;
+  }
+
+  if (!cached.promise) {
+    cached.promise = mongoose.connect(mongoUri);
   }
 
   try {
-    await mongoose.connect(MONGODB_URI);
-    console.log(`App is Successfully connected to MongoDB : ${mongoose.connection.db?.databaseName}!`);
+    cached.conn = await cached.promise;
+
+    console.log(
+      `MongoDB connected successfully: ${cached.conn.connection.db?.databaseName}`,
+    );
+
+    return cached.conn;
   } catch (error) {
-    console.error("Pantry App has Failed to connect to MongoDB:", error);
+    cached.promise = null;
+
+    console.error("MongoDB connection failed:", error);
+
     throw error;
   }
 }

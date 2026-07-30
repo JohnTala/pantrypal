@@ -1,22 +1,37 @@
 import { Schema, model, models } from "mongoose";
 
-const UserSchema = new Schema({
-  name: {
-    type: String,
-    required: true,
-  },
+const isEmail = (email: string) => {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+};
 
-  email: {
-    type: String,
-    required: true,
-    unique: true,
-  },
+const UserSchema = new Schema(
+  {
+    name: {
+      type: String,
+      required: [true, "Please provide your full name"],
+      minlength: [2, "Name must be at least 2 characters long"],
+      trim: true,
+    },
 
-  password: {
-    type: String,
-    required: true,
+    email: {
+      type: String,
+      unique: true,
+      required: [true, "Please provide an email"],
+      lowercase: true,
+      trim: true,
+      validate: [isEmail, "Please enter a valid email"],
+    },
+
+    password: {
+      type: String,
+      required: [true, "Please provide a password"],
+      minlength: [8, "Password must be at least 8 characters long"],
+    },
   },
-});
+  {
+    timestamps: true,
+  },
+);
 
 const User = models.User || model("User", UserSchema);
 
