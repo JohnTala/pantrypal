@@ -1,3 +1,11 @@
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Search Pantry",
+  description:
+    "Search your PantryPal inventory to quickly find pantry items and manage your food supply.",
+};
+
 export default function SearchPantryPage() {
   return (
     <section className="mx-auto max-w-4xl p-6">

@@ -1,6 +1,13 @@
+import type { Metadata } from "next";
 import PantryForm from "@/components/pantry/PantryForm";
 import { auth } from "@/auth";
 import { redirect } from "next/navigation";
+
+export const metadata: Metadata = {
+  title: "Add Pantry Item",
+  description:
+    "Add a new pantry item to your PantryPal inventory and track its expiration date.",
+};
 
 export default async function NewPantryItemPage() {
   const session = await auth();

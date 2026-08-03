@@ -1,6 +1,13 @@
 
 
+import type { Metadata } from "next";
 import Link from "next/link";
+
+export const metadata: Metadata = {
+  title: "Home",
+  description:
+    "Welcome to PantryPal. Organize your pantry, track expiration dates, and reduce food waste with an easy-to-use pantry management application.",
+};
 
 export default async function HomePage() {
    // Simulate a 2-second server delay

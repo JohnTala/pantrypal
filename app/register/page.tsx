@@ -1,5 +1,12 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import RegisterForm from "@/components/auth/RegisterForm";
+
+export const metadata: Metadata = {
+  title: "Register",
+  description:
+    "Create a PantryPal account to organize your pantry, track expiration dates, and reduce food waste.",
+};
 
 export default function RegisterPage() {
   return (

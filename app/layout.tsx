@@ -1,5 +1,3 @@
-
-
 import type { Metadata } from "next";
 import "./globals.css";
 import Navbar from "@/components/layout/Navbar";
@@ -12,6 +10,15 @@ export const metadata: Metadata = {
   },
   description:
     "PantryPal helps households organize pantry items, track expiration dates, and reduce food waste.",
+  keywords: [
+    "PantryPal",
+    "pantry management",
+    "food inventory",
+    "expiration tracker",
+    "meal planning",
+    "food waste reduction",
+  ],
+  authors: [{ name: "PantryPal Team" }],
 };
 
 export default function RootLayout({

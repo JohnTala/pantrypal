@@ -1,7 +1,14 @@
+import type { Metadata } from "next";
 import { auth } from "@/auth";
 import { redirect } from "next/navigation";
 import { connectDB } from "@/lib/mongodb";
 import PantryItem from "@/models/PantryItem";
+
+export const metadata: Metadata = {
+  title: "My Pantry",
+  description:
+    "View, organize, and manage your pantry items while tracking expiration dates in PantryPal.",
+};
 
 export default async function PantryPage() {
   const session = await auth();

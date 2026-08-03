@@ -1,9 +1,16 @@
+import type { Metadata } from "next";
 import { auth } from "@/auth";
 import { redirect } from "next/navigation";
 import DashboardSummary from "@/components/dashboard/DashboardSummary";
 import RecentItems from "@/components/dashboard/RecentItems";
 import Link from "next/link";
 import { getUserPantryItems } from "@/lib/pantry";
+
+export const metadata: Metadata = {
+  title: "Dashboard",
+  description:
+    "View your pantry overview, recent items, and expiration reminders from your PantryPal dashboard.",
+};
 
 export default async function DashboardPage() {
   const session = await auth();

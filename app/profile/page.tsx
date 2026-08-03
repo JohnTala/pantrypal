@@ -1,3 +1,11 @@
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Profile",
+  description:
+    "View and manage your PantryPal profile information and account settings.",
+};
+
 export default function ProfilePage() {
   return (
     <section className="mx-auto max-w-3xl p-6">

@@ -1,4 +1,11 @@
+import type { Metadata } from "next";
 import Link from "next/link";
+
+export const metadata: Metadata = {
+  title: "Reminders",
+  description:
+    "View and manage your pantry expiration reminders to help reduce food waste.",
+};
 
 export default function RemindersPage() {
   return (

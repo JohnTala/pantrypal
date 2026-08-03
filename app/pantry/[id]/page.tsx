@@ -1,7 +1,20 @@
+import type { Metadata } from "next";
+
 interface PantryItemPageProps {
   params: Promise<{
     id: string;
   }>;
+}
+
+export async function generateMetadata({
+  params,
+}: PantryItemPageProps): Promise<Metadata> {
+  const { id } = await params;
+
+  return {
+    title: `Pantry Item ${id}`,
+    description: `View the details of pantry item ${id} in PantryPal.`,
+  };
 }
 
 export default async function PantryItemPage({
