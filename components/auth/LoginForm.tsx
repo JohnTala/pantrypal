@@ -2,6 +2,12 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { signIn } from "next-auth/react";
+
+interface SignInResponse {
+  error?: string;
+  ok?: boolean;
+}
 
 export default function LoginForm() {
   const router = useRouter();
@@ -19,28 +25,21 @@ export default function LoginForm() {
     setError("");
 
     try {
-      const response = await fetch("/api/auth/login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          email,
-          password,
-        }),
+      const result: SignInResponse | undefined = await signIn("credentials", {
+        email,
+        password,
+        redirect: false,
       });
 
-      const data = await response.json();
-
-      if (!response.ok) {
-        setError(data.message);
+      if (result?.error) {
+        setError("Invalid email or password.");
         return;
       }
 
       router.push("/dashboard");
       router.refresh();
     } catch {
-      setError("Something went wrong.");
+      setError("Something went wrong. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -50,30 +49,48 @@ export default function LoginForm() {
     <form onSubmit={handleSubmit} className="space-y-4 max-w-md mx-auto">
       <h2 className="text-2xl font-bold text-center">Login</h2>
 
-      <input
-        type="email"
-        placeholder="Email"
-        className="w-full border rounded p-2"
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
-        required
-      />
+      <div>
+        <label htmlFor="email" className="block text-sm font-medium mb-1">
+          Email
+        </label>
+        <input
+          id="email"
+          name="email"
+          type="email"
+          className="w-full border rounded p-2"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          required
+          autoComplete="email"
+        />
+      </div>
 
-      <input
-        type="password"
-        placeholder="Password"
-        className="w-full border rounded p-2"
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
-        required
-      />
+      <div>
+        <label htmlFor="password" className="block text-sm font-medium mb-1">
+          Password
+        </label>
+        <input
+          id="password"
+          name="password"
+          type="password"
+          className="w-full border rounded p-2"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          required
+          autoComplete="current-password"
+        />
+      </div>
 
-      {error && <p className="text-red-500 text-sm">{error}</p>}
+      {error && (
+        <p className="text-red-500 text-sm" role="alert">
+          {error}
+        </p>
+      )}
 
       <button
         type="submit"
         disabled={loading}
-        className="w-full bg-blue-600 text-white rounded p-2"
+        className="w-full bg-blue-600 text-white rounded p-2 disabled:opacity-50"
       >
         {loading ? "Logging in..." : "Login"}
       </button>
