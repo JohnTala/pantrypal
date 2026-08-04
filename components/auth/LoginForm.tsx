@@ -4,11 +4,6 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { signIn } from "next-auth/react";
 
-interface SignInResponse {
-  error?: string;
-  ok?: boolean;
-}
-
 export default function LoginForm() {
   const router = useRouter();
 
@@ -25,13 +20,13 @@ export default function LoginForm() {
     setError("");
 
     try {
-      const result: SignInResponse | undefined = await signIn("credentials", {
+      const result = await signIn("credentials", {
         email,
         password,
         redirect: false,
       });
 
-      if (result?.error) {
+      if (!result || result.error || !result.ok) {
         setError("Invalid email or password.");
         return;
       }
@@ -53,6 +48,7 @@ export default function LoginForm() {
         <label htmlFor="email" className="block text-sm font-medium mb-1">
           Email
         </label>
+
         <input
           id="email"
           name="email"
@@ -69,6 +65,7 @@ export default function LoginForm() {
         <label htmlFor="password" className="block text-sm font-medium mb-1">
           Password
         </label>
+
         <input
           id="password"
           name="password"
@@ -90,7 +87,7 @@ export default function LoginForm() {
       <button
         type="submit"
         disabled={loading}
-        className="w-full bg-blue-600 text-white rounded p-2 disabled:opacity-50"
+        className="w-full rounded bg-blue-600 p-2 text-white disabled:opacity-50"
       >
         {loading ? "Logging in..." : "Login"}
       </button>
