@@ -15,9 +15,9 @@ import {
 
 const sidebarLinks = [
   { href: "/dashboard", label: "Dashboard", icon: HiOutlineSquares2X2 },
-  { href: "/pantry", label: "Pantry", icon: HiOutlineHome },
-  { href: "/reminders", label: "Reminders", icon: HiOutlineBell },
-  { href: "/profile", label: "Profile", icon: HiOutlineUser },
+  { href: "/dashboard/pantry", label: "Pantry", icon: HiOutlineHome }, // ✅ Fixed path
+  { href: "/dashboard/reminders", label: "Reminders", icon: HiOutlineBell }, // ✅ Fixed path
+  { href: "/dashboard/profile", label: "Profile", icon: HiOutlineUser }, // ✅ Fixed path
 ];
 
 export default function DashboardSidebar() {
@@ -31,11 +31,7 @@ export default function DashboardSidebar() {
     return pathname.startsWith(href);
   };
 
-// components/layout/DashboardSidebar.tsx (logout function)
-
-// components/layout/DashboardSidebar.tsx (update handleLogout)
-
-const handleLogout = async () => {
+  const handleLogout = async () => {
     try {
       // Clear localStorage (for demo)
       localStorage.removeItem("isLoggedIn");
@@ -59,7 +55,7 @@ const handleLogout = async () => {
   return (
     <aside className="hidden md:flex md:flex-col md:w-64 bg-white border-r border-gray-200">
       {/* Logo */}
-      <div className="flex items-center justify-center h-16 border-b border-gray-200 py-9">
+      <div className="flex items-center justify-center h-16 border-b border-gray-200">
         <Link href="/dashboard" className="text-2xl font-bold text-emerald-600">
           🥫 PantryPal
         </Link>
@@ -94,7 +90,7 @@ const handleLogout = async () => {
       {/* Bottom Section */}
       <div className="border-t border-gray-200 p-4 space-y-2">
         <Link
-          href="/settings"
+          href="/dashboard/settings"
           className="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-700 hover:bg-gray-100 transition-colors"
         >
           <HiOutlineCog6Tooth className="h-5 w-5" />
