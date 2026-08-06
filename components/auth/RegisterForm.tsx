@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { useFormStatus } from "react-dom";
 import { registerUser } from "@/app/register/actions";
 
@@ -19,6 +20,7 @@ function SubmitButton() {
 }
 
 export default function RegisterForm() {
+  const router = useRouter();
   const [error, setError] = useState("");
 
   return (
@@ -30,10 +32,18 @@ export default function RegisterForm() {
 
         if (result?.success === false) {
           setError(result.message);
+          return;
         }
+
+        router.push("/login");
+        router.refresh();
       }}
-      className="space-y-5"
+      className="space-y-5 rounded-xl bg-white p-6 shadow-md max-w-md mx-auto"
     >
+      <h2 className="text-2xl font-bold text-center text-slate-800">
+        Create Account
+      </h2>
+
       {error && (
         <div
           role="alert"
@@ -56,7 +66,7 @@ export default function RegisterForm() {
           name="name"
           type="text"
           autoComplete="name"
-          placeholder="Miracle Lawrence"
+          placeholder="John Doe"
           required
           className="w-full rounded-lg border border-slate-300 px-4 py-3 focus:border-green-500 focus:outline-none focus:ring-2 focus:ring-green-200"
         />
@@ -75,7 +85,7 @@ export default function RegisterForm() {
           name="email"
           type="email"
           autoComplete="email"
-          placeholder="nhanga@example.com"
+          placeholder="john@example.com"
           required
           className="w-full rounded-lg border border-slate-300 px-4 py-3 focus:border-green-500 focus:outline-none focus:ring-2 focus:ring-green-200"
         />
@@ -94,6 +104,7 @@ export default function RegisterForm() {
           name="password"
           type="password"
           autoComplete="new-password"
+          placeholder="********"
           required
           className="w-full rounded-lg border border-slate-300 px-4 py-3 focus:border-green-500 focus:outline-none focus:ring-2 focus:ring-green-200"
         />
@@ -112,6 +123,7 @@ export default function RegisterForm() {
           name="confirmPassword"
           type="password"
           autoComplete="new-password"
+          placeholder="********"
           required
           className="w-full rounded-lg border border-slate-300 px-4 py-3 focus:border-green-500 focus:outline-none focus:ring-2 focus:ring-green-200"
         />

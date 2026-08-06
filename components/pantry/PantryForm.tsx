@@ -73,9 +73,12 @@ export default function PantryForm() {
           id="category"
           name="category"
           required
+          defaultValue=""
           className="w-full rounded-lg border border-slate-300 px-4 py-3 focus:border-green-500 focus:outline-none focus:ring-2 focus:ring-green-200"
         >
-          <option value="">Select category</option>
+          <option value="" disabled>
+            Select category
+          </option>
           <option value="Grains">Grains</option>
           <option value="Dairy">Dairy</option>
           <option value="Vegetables">Vegetables</option>
@@ -100,7 +103,7 @@ export default function PantryForm() {
             name="quantity"
             type="number"
             min="1"
-            placeholder="1"
+            defaultValue="1"
             required
             className="w-full rounded-lg border border-slate-300 px-4 py-3 focus:border-green-500 focus:outline-none focus:ring-2 focus:ring-green-200"
           />
@@ -117,11 +120,14 @@ export default function PantryForm() {
           <select
             id="unit"
             name="unit"
+            defaultValue="pcs"
             className="w-full rounded-lg border border-slate-300 px-4 py-3 focus:border-green-500 focus:outline-none focus:ring-2 focus:ring-green-200"
           >
-            <option value="item">Item</option>
+            <option value="pcs">Pieces (pcs)</option>
             <option value="kg">Kilogram (kg)</option>
-            <option value="litre">Litre</option>
+            <option value="g">Gram (g)</option>
+            <option value="L">Litre (L)</option>
+            <option value="ml">Millilitre (ml)</option>
             <option value="packet">Packet</option>
             <option value="can">Can</option>
           </select>
@@ -130,15 +136,15 @@ export default function PantryForm() {
 
       <div>
         <label
-          htmlFor="expiryDate"
+          htmlFor="expirationDate"
           className="mb-2 block text-sm font-medium text-slate-700"
         >
-          Expiry Date
+          Expiration Date
         </label>
 
         <input
-          id="expiryDate"
-          name="expiryDate"
+          id="expirationDate"
+          name="expirationDate"
           type="date"
           required
           className="w-full rounded-lg border border-slate-300 px-4 py-3 focus:border-green-500 focus:outline-none focus:ring-2 focus:ring-green-200"

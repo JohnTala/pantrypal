@@ -1,3 +1,6 @@
+
+import LoginForm from "@/components/auth/LoginForm";
+
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -7,9 +10,11 @@ export const metadata: Metadata = {
 };
 
 export default function LoginPage() {
+
   return (
-    <main className="p-8">
-      <h1>Login</h1>
+    <main className="flex items-center justify-center min-h-screen p-6">
+      <LoginForm />
     </main>
   );
 }
+

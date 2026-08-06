@@ -1,19 +1,21 @@
 import NextAuth from "next-auth";
 import Credentials from "next-auth/providers/credentials";
 
+import authConfig from "./auth.config";
+
 import { connectDB } from "@/lib/mongodb";
 import User from "@/models/User";
 import { verifyPassword } from "@/lib/password";
 
-export const {
-  handlers,
-  signIn,
-  signOut,
-  auth,
-} = NextAuth({
-  secret: process.env.AUTH_SECRET,
+export const { handlers, signIn, signOut, auth } = NextAuth({
+  ...authConfig,
 
+  secret: process.env.AUTH_SECRET,
   trustHost: true,
+
+  session: {
+    strategy: "jwt",
+  },
 
   providers: [
     Credentials({
@@ -24,7 +26,6 @@ export const {
           label: "Email",
           type: "email",
         },
-
         password: {
           label: "Password",
           type: "password",
@@ -32,23 +33,19 @@ export const {
       },
 
       async authorize(credentials) {
-        await connectDB();
-
-        const email = credentials?.email
-          ?.toString()
-          .trim()
-          .toLowerCase();
-
-        const password = credentials?.password
-          ?.toString();
-
-        if (!email || !password) {
+        if (!credentials?.email || !credentials?.password) {
           return null;
         }
 
-        const user = await User.findOne({
-          email,
-        });
+        await connectDB();
+
+        const email = (credentials.email as string)
+          .trim()
+          .toLowerCase();
+
+        const password = credentials.password as string;
+
+        const user = await User.findOne({ email });
 
         if (!user) {
           return null;
@@ -56,7 +53,7 @@ export const {
 
         const passwordMatch = await verifyPassword(
           password,
-          user.password,
+          user.password
         );
 
         if (!passwordMatch) {
@@ -74,10 +71,6 @@ export const {
 
   pages: {
     signIn: "/login",
-  },
-
-  session: {
-    strategy: "jwt",
   },
 
   callbacks: {

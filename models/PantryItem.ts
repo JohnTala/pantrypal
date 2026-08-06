@@ -18,17 +18,18 @@ const PantryItemSchema = new Schema(
       type: Number,
       required: [true, "Please provide a quantity"],
       min: [1, "Quantity must be at least 1"],
+      default: 1,
     },
 
     unit: {
       type: String,
-      default: "item",
+      default: "pcs",
       trim: true,
     },
 
-    expiryDate: {
+    expirationDate: {
       type: Date,
-      required: [true, "Please provide an expiry date"],
+      required: [true, "Please provide an expiration date"],
     },
 
     userId: {
@@ -39,7 +40,7 @@ const PantryItemSchema = new Schema(
   },
   {
     timestamps: true,
-  },
+  }
 );
 
 const PantryItem =

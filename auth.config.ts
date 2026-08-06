@@ -1,29 +1,34 @@
-// auth.config.ts  (project root)
-import type { NextAuthConfig } from 'next-auth';
+import type { NextAuthConfig } from "next-auth";
 
-export const authConfig = {
+const authConfig: NextAuthConfig = {
+  providers: [],
+
   pages: {
-    signIn: '/login', // use your own login page instead of the Auth.js default
+    signIn: "/login",
   },
+
   callbacks: {
     authorized({ auth, request: { nextUrl } }) {
       const isLoggedIn = !!auth?.user;
 
-      // Protect all routes under /dashboard
-      const isProtected = nextUrl.pathname.startsWith('/dashboard');
+      // Protect dashboard routes
+      const isProtected =
+        nextUrl.pathname.startsWith("/dashboard");
 
       if (isProtected) {
-        if (isLoggedIn) return true;
-        return false; // redirects to /login
+        return isLoggedIn;
       }
 
-      // Redirect already-logged-in users away from the login page
-      if (isLoggedIn && nextUrl.pathname === '/login') {
-        return Response.redirect(new URL('/dashboard', nextUrl));
+      // Prevent authenticated users from visiting the login page
+      if (isLoggedIn && nextUrl.pathname === "/login") {
+        return Response.redirect(
+          new URL("/dashboard", nextUrl)
+        );
       }
 
       return true;
     },
   },
-  providers: [], // providers are added in auth.ts
-} satisfies NextAuthConfig;
+};
+
+export default authConfig;

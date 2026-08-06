@@ -1,8 +1,54 @@
 "use client";
 
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { signIn } from "next-auth/react";
+
 export default function LoginForm() {
+  const router = useRouter();
+
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+
+    setLoading(true);
+    setError("");
+
+    try {
+      const result = await signIn("credentials", {
+        email,
+        password,
+        redirect: false,
+      });
+
+      if (!result?.ok || result.error) {
+        setError("Invalid email or password.");
+        return;
+      }
+
+      router.push("/dashboard");
+      router.refresh();
+    } catch {
+      setError("Something went wrong. Please try again.");
+    } finally {
+      setLoading(false);
+    }
+  }
+
   return (
-    <form className="space-y-5 rounded-xl bg-white p-6 shadow-md">
+    <form
+      onSubmit={handleSubmit}
+      className="space-y-5 rounded-xl bg-white p-6 shadow-md max-w-md mx-auto"
+    >
+      <h2 className="text-2xl font-bold text-center text-slate-800">
+        Login
+      </h2>
+
       <div>
         <label
           htmlFor="email"
@@ -17,6 +63,10 @@ export default function LoginForm() {
           type="email"
           placeholder="example@email.com"
           className="w-full rounded-lg border border-slate-300 px-4 py-3 focus:border-green-500 focus:outline-none focus:ring-2 focus:ring-green-200"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          required
+          autoComplete="email"
         />
       </div>
 
@@ -34,20 +84,26 @@ export default function LoginForm() {
           type="password"
           placeholder="********"
           className="w-full rounded-lg border border-slate-300 px-4 py-3 focus:border-green-500 focus:outline-none focus:ring-2 focus:ring-green-200"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          required
+          autoComplete="current-password"
         />
       </div>
 
+      {error && (
+        <p className="text-sm text-red-600" role="alert">
+          {error}
+        </p>
+      )}
+
       <button
         type="submit"
-        className="w-full rounded-lg bg-green-600 py-3 font-medium text-white transition hover:bg-green-700"
+        disabled={loading}
+        className="w-full rounded-lg bg-green-600 py-3 font-medium text-white transition hover:bg-green-700 disabled:cursor-not-allowed disabled:opacity-50"
       >
-        Login
+        {loading ? "Logging in..." : "Login"}
       </button>
-
-      <p className="text-center text-sm text-slate-500">
-        Login functionality will be connected soon.
-      </p>
     </form>
   );
 }
-

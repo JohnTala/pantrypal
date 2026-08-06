@@ -15,8 +15,8 @@ const UserSchema = new Schema(
 
     email: {
       type: String,
-      unique: true,
       required: [true, "Please provide an email"],
+      unique: true,
       lowercase: true,
       trim: true,
       validate: [isEmail, "Please enter a valid email"],
@@ -30,7 +30,7 @@ const UserSchema = new Schema(
   },
   {
     timestamps: true,
-  },
+  }
 );
 
 const User = models.User || model("User", UserSchema);
