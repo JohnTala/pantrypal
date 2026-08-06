@@ -40,7 +40,7 @@ export default function PantryItemCard({
           </p>
         </div>
 
-        <DeleteDialog id={id} itemName={name} />
+       <DeleteDialog itemId={id} itemName={name} />
       </div>
 
     </div>
