@@ -6,7 +6,7 @@ type PantryItemCardProps = {
   category: string;
   quantity: number;
   unit: string;
-  expiryDate: string;
+  expirationDate: string;
 };
 
 export default function PantryItemCard({
@@ -15,7 +15,7 @@ export default function PantryItemCard({
   category,
   quantity,
   unit,
-  expiryDate,
+  expirationDate,
 }: PantryItemCardProps) {
   return (
     <div className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
@@ -36,7 +36,7 @@ export default function PantryItemCard({
 
           <p className="mt-2 text-sm text-green-700">
             Expires:{" "}
-            {new Date(expiryDate).toLocaleDateString()}
+            {new Date(expirationDate).toLocaleDateString()}
           </p>
         </div>
 

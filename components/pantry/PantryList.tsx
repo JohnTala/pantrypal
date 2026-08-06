@@ -7,7 +7,7 @@ type PantryItem = {
   category: string;
   quantity: number;
   unit: string;
-  expiryDate: string;
+  expirationDate: string;
 };
 
 

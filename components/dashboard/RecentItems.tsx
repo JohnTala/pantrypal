@@ -4,7 +4,7 @@ type PantryItem = {
   category: string;
   quantity: number;
   unit: string;
-  expiryDate: string;
+  expirationDate: string;
   createdAt: string;
 };
 
@@ -52,7 +52,7 @@ export default function RecentItems({
 
               <span className="rounded-full bg-green-100 px-3 py-1 text-sm font-medium text-green-700">
                 Expires:{" "}
-                {new Date(item.expiryDate).toLocaleDateString()}
+                {new Date(item.expirationDate).toLocaleDateString()}
               </span>
             </div>
           ))

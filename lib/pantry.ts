@@ -14,7 +14,14 @@ export async function getUserPantryItems(userId: string) {
     category: item.category,
     quantity: item.quantity,
     unit: item.unit,
-    expiryDate: item.expiryDate.toISOString(),
-    createdAt: item.createdAt.toISOString(),
+
+    expirationDate: item.expirationDate
+      ? new Date(item.expirationDate).toISOString()
+
+      : "",
+
+    createdAt: item.createdAt
+      ? new Date(item.createdAt).toISOString()
+      : "",
   }));
 }

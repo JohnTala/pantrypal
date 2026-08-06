@@ -6,7 +6,7 @@ type PantryItem = {
   category: string;
   quantity: number;
   unit: string;
-  expiryDate: string;
+  expirationDate: string;
   createdAt: string;
 };
 
@@ -20,17 +20,17 @@ export default function DashboardSummary({
   const today = new Date();
 
   const expiringSoon = items.filter((item) => {
-    const expiryDate = new Date(item.expiryDate);
+    const expirationDate = new Date(item.expirationDate);
 
     const daysRemaining =
-      (expiryDate.getTime() - today.getTime()) /
+      (expirationDate.getTime() - today.getTime()) /
       (1000 * 60 * 60 * 24);
 
     return daysRemaining > 0 && daysRemaining <= 7;
   });
 
   const expiredItems = items.filter((item) => {
-    return new Date(item.expiryDate) < today;
+    return new Date(item.expirationDate) < today;
   });
 
   const stats = [
