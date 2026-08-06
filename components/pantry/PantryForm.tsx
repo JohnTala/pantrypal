@@ -4,7 +4,25 @@ import { useState } from "react";
 import { useFormStatus } from "react-dom";
 import { createPantryItem } from "@/app/pantry/new/actions";
 
-function SubmitButton() {
+export type PantryFormData = {
+  name: string;
+  category: string;
+  quantity: number;
+  unit: string;
+  expirationDate: string;
+};
+
+interface PantryFormProps {
+  initialData?: PantryFormData;
+  submitText?: string;
+  onSubmit?: (data: PantryFormData) => Promise<void>;
+}
+
+function SubmitButton({
+  text,
+}: {
+  text: string;
+}) {
   const { pending } = useFormStatus();
 
   return (
@@ -13,25 +31,43 @@ function SubmitButton() {
       disabled={pending}
       className="w-full rounded-lg bg-green-600 py-3 font-medium text-white transition hover:bg-green-700 disabled:cursor-not-allowed disabled:opacity-50"
     >
-      {pending ? "Adding Item..." : "Add Pantry Item"}
+      {pending ? "Saving..." : text}
     </button>
   );
 }
 
-export default function PantryForm() {
+export default function PantryForm({
+  initialData,
+  submitText = "Add Pantry Item",
+  onSubmit,
+}: PantryFormProps) {
   const [error, setError] = useState("");
+
+  async function handleAction(formData: FormData) {
+    setError("");
+
+    if (onSubmit) {
+      await onSubmit({
+        name: formData.get("name") as string,
+        category: formData.get("category") as string,
+        quantity: Number(formData.get("quantity")),
+        unit: formData.get("unit") as string,
+        expirationDate: formData.get("expirationDate") as string,
+      });
+
+      return;
+    }
+
+    const result = await createPantryItem(formData);
+
+    if (result?.success === false) {
+      setError(result.message);
+    }
+  }
 
   return (
     <form
-      action={async (formData: FormData) => {
-        setError("");
-
-        const result = await createPantryItem(formData);
-
-        if (result?.success === false) {
-          setError(result.message);
-        }
-      }}
+      action={handleAction}
       className="space-y-5 rounded-xl bg-white p-6 shadow-md"
     >
       {error && (
@@ -44,10 +80,7 @@ export default function PantryForm() {
       )}
 
       <div>
-        <label
-          htmlFor="name"
-          className="mb-2 block text-sm font-medium text-slate-700"
-        >
+        <label htmlFor="name" className="mb-2 block text-sm font-medium">
           Item Name
         </label>
 
@@ -55,30 +88,25 @@ export default function PantryForm() {
           id="name"
           name="name"
           type="text"
-          placeholder="Rice"
           required
-          className="w-full rounded-lg border border-slate-300 px-4 py-3 focus:border-green-500 focus:outline-none focus:ring-2 focus:ring-green-200"
+          defaultValue={initialData?.name ?? ""}
+          className="w-full rounded-lg border px-4 py-3"
         />
       </div>
 
       <div>
-        <label
-          htmlFor="category"
-          className="mb-2 block text-sm font-medium text-slate-700"
-        >
+        <label htmlFor="category" className="mb-2 block text-sm font-medium">
           Category
         </label>
 
         <select
           id="category"
           name="category"
+          defaultValue={initialData?.category ?? ""}
           required
-          defaultValue=""
-          className="w-full rounded-lg border border-slate-300 px-4 py-3 focus:border-green-500 focus:outline-none focus:ring-2 focus:ring-green-200"
+          className="w-full rounded-lg border px-4 py-3"
         >
-          <option value="" disabled>
-            Select category
-          </option>
+          <option value="">Select category</option>
           <option value="Grains">Grains</option>
           <option value="Dairy">Dairy</option>
           <option value="Vegetables">Vegetables</option>
@@ -91,10 +119,7 @@ export default function PantryForm() {
 
       <div className="grid gap-5 sm:grid-cols-2">
         <div>
-          <label
-            htmlFor="quantity"
-            className="mb-2 block text-sm font-medium text-slate-700"
-          >
+          <label htmlFor="quantity" className="mb-2 block text-sm font-medium">
             Quantity
           </label>
 
@@ -103,25 +128,22 @@ export default function PantryForm() {
             name="quantity"
             type="number"
             min="1"
-            defaultValue="1"
             required
-            className="w-full rounded-lg border border-slate-300 px-4 py-3 focus:border-green-500 focus:outline-none focus:ring-2 focus:ring-green-200"
+            defaultValue={initialData?.quantity ?? 1}
+            className="w-full rounded-lg border px-4 py-3"
           />
         </div>
 
         <div>
-          <label
-            htmlFor="unit"
-            className="mb-2 block text-sm font-medium text-slate-700"
-          >
+          <label htmlFor="unit" className="mb-2 block text-sm font-medium">
             Unit
           </label>
 
           <select
             id="unit"
             name="unit"
-            defaultValue="pcs"
-            className="w-full rounded-lg border border-slate-300 px-4 py-3 focus:border-green-500 focus:outline-none focus:ring-2 focus:ring-green-200"
+            defaultValue={initialData?.unit ?? "pcs"}
+            className="w-full rounded-lg border px-4 py-3"
           >
             <option value="pcs">Pieces (pcs)</option>
             <option value="kg">Kilogram (kg)</option>
@@ -137,7 +159,7 @@ export default function PantryForm() {
       <div>
         <label
           htmlFor="expirationDate"
-          className="mb-2 block text-sm font-medium text-slate-700"
+          className="mb-2 block text-sm font-medium"
         >
           Expiration Date
         </label>
@@ -147,11 +169,12 @@ export default function PantryForm() {
           name="expirationDate"
           type="date"
           required
-          className="w-full rounded-lg border border-slate-300 px-4 py-3 focus:border-green-500 focus:outline-none focus:ring-2 focus:ring-green-200"
+          defaultValue={initialData?.expirationDate ?? ""}
+          className="w-full rounded-lg border px-4 py-3"
         />
       </div>
 
-      <SubmitButton />
+      <SubmitButton text={submitText} />
     </form>
   );
 }

@@ -1,29 +1,17 @@
-
 "use client";
 
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 
-import PantryForm, { PantryFormData } from "@/components/pantry/PantryForm";
+import PantryForm from "@/components/pantry/PantryForm";
 
-import type { Metadata } from "next";
-
-interface EditPantryItemPageProps {
-  params: Promise<{
-    id: string;
-  }>;
-}
-
-export async function generateMetadata({
-  params,
-}: EditPantryItemPageProps): Promise<Metadata> {
-  const { id } = await params;
-
-  return {
-    title: `Edit Pantry Item ${id}`,
-    description: `Edit the details of pantry item ${id} in PantryPal.`,
-  };
-}
+type PantryFormData = {
+  name: string;
+  category: string;
+  quantity: number;
+  unit: string;
+  expirationDate: string;
+};
 
 export default function EditPantryItemPage() {
   const router = useRouter();
@@ -102,7 +90,9 @@ export default function EditPantryItemPage() {
 
   return (
     <main className="p-6">
-      <h1 className="text-3xl font-bold text-center mb-6">Edit Pantry Item</h1>
+      <h1 className="text-3xl font-bold text-center mb-6">
+        Edit Pantry Item
+      </h1>
 
       <PantryForm
         initialData={item}
@@ -112,4 +102,3 @@ export default function EditPantryItemPage() {
     </main>
   );
 }
-
