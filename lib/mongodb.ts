@@ -8,6 +8,8 @@ if (!MONGODB_URI) {
   );
 }
 
+const mongoUri: string = MONGODB_URI;
+
 declare global {
   var mongooseConnection:
     | {
@@ -30,7 +32,7 @@ export async function connectDB(): Promise<typeof mongoose> {
   }
 
   if (!cached.promise) {
-    cached.promise = mongoose.connect(MONGODB_URI);
+    cached.promise = mongoose.connect(mongoUri);
   }
 
   try {
@@ -43,9 +45,7 @@ export async function connectDB(): Promise<typeof mongoose> {
     return cached.conn;
   } catch (error) {
     cached.promise = null;
-
     console.error("MongoDB connection failed:", error);
-
     throw error;
   }
 }

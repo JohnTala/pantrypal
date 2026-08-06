@@ -11,16 +11,22 @@ const authConfig: NextAuthConfig = {
     authorized({ auth, request: { nextUrl } }) {
       const isLoggedIn = !!auth?.user;
 
-      // Protect dashboard routes
       const isProtected =
-        nextUrl.pathname.startsWith("/dashboard");
+        nextUrl.pathname.startsWith("/dashboard") ||
+        nextUrl.pathname.startsWith("/pantry") ||
+        nextUrl.pathname.startsWith("/profile") ||
+        nextUrl.pathname.startsWith("/reminders");
 
       if (isProtected) {
         return isLoggedIn;
       }
 
-      // Prevent authenticated users from visiting the login page
-      if (isLoggedIn && nextUrl.pathname === "/login") {
+      // Prevent logged-in users from returning to login or register
+      if (
+        isLoggedIn &&
+        (nextUrl.pathname === "/login" ||
+          nextUrl.pathname === "/register")
+      ) {
         return Response.redirect(
           new URL("/dashboard", nextUrl)
         );
