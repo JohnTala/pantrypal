@@ -34,6 +34,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 
       async authorize(credentials) {
         if (!credentials?.email || !credentials?.password) {
+           console.log("Missing credentials");
           return null;
         }
 
@@ -44,22 +45,26 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           .toLowerCase();
 
         const password = credentials.password as string;
+          console.log("Login email:", email);
 
         const user = await User.findOne({ email });
+          console.log("User found:", !!user);
 
         if (!user) {
           return null;
         }
-
+        console.log("Stored hash:", user.password);
         const passwordMatch = await verifyPassword(
           password,
           user.password
         );
 
+         console.log("Password match:", passwordMatch);
         if (!passwordMatch) {
           return null;
         }
 
+          console.log("Login successful");
         return {
           id: user._id.toString(),
           name: user.name,
