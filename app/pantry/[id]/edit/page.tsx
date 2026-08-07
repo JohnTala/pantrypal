@@ -3,15 +3,9 @@
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 
-import PantryForm from "@/components/pantry/PantryForm";
-
-type PantryFormData = {
-  name: string;
-  category: string;
-  quantity: number;
-  unit: string;
-  expirationDate: string;
-};
+import PantryForm, {
+  PantryFormData,
+} from "@/components/pantry/PantryForm";
 
 export default function EditPantryItemPage() {
   const router = useRouter();
@@ -21,11 +15,12 @@ export default function EditPantryItemPage() {
 
   const [item, setItem] = useState<PantryFormData | null>(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
 
   useEffect(() => {
     async function fetchItem() {
       try {
-        const response = await fetch(`/api/items/${id}`);
+        const response = await fetch(`/api/pantry/${id}`);
 
         if (!response.ok) {
           throw new Error("Failed to load pantry item.");
@@ -40,8 +35,9 @@ export default function EditPantryItemPage() {
           unit: data.unit,
           expirationDate: data.expirationDate.slice(0, 10),
         });
-      } catch (error) {
-        console.error(error);
+      } catch (err) {
+        console.error(err);
+        setError("Unable to load pantry item.");
       } finally {
         setLoading(false);
       }
@@ -53,50 +49,64 @@ export default function EditPantryItemPage() {
   }, [id]);
 
   async function handleUpdate(data: PantryFormData) {
-    const response = await fetch(`/api/items/${id}`, {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(data),
-    });
+    try {
+      const response = await fetch(`/api/pantry/${id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      });
 
-    if (!response.ok) {
+      if (!response.ok) {
+        throw new Error("Failed to update pantry item.");
+      }
+
+      router.push("/pantry");
+      router.refresh();
+    } catch (err) {
+      console.error(err);
       alert("Failed to update pantry item.");
-      return;
     }
-
-    alert("Pantry item updated successfully!");
-
-    router.push("/pantry");
-    router.refresh();
   }
 
   if (loading) {
     return (
-      <main className="flex justify-center items-center min-h-screen">
-        <p>Loading...</p>
+      <main className="mx-auto max-w-2xl p-6">
+        <p className="text-slate-600">Loading pantry item...</p>
       </main>
     );
   }
 
-  if (!item) {
+  if (error || !item) {
     return (
-      <main className="flex justify-center items-center min-h-screen">
-        <p>Pantry item not found.</p>
+      <main className="mx-auto max-w-2xl p-6">
+        <h1 className="mb-4 text-3xl font-bold text-red-600">
+          Pantry Item Not Found
+        </h1>
+
+        <p className="text-slate-600">
+          {error || "The requested pantry item could not be found."}
+        </p>
       </main>
     );
   }
 
   return (
-    <main className="p-6">
-      <h1 className="text-3xl font-bold text-center mb-6">
-        Edit Pantry Item
-      </h1>
+    <main className="mx-auto max-w-2xl space-y-6 p-6">
+      <div>
+        <h1 className="text-3xl font-bold text-green-600">
+          Edit Pantry Item
+        </h1>
+
+        <p className="mt-2 text-slate-600">
+          Update your pantry item information below.
+        </p>
+      </div>
 
       <PantryForm
         initialData={item}
-        submitText="Update Item"
+        submitText="Update Pantry Item"
         onSubmit={handleUpdate}
       />
     </main>

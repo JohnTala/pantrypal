@@ -1,11 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 
-import { connectDB } from "@/lib/mongodb";
 import { auth } from "@/auth";
+import { connectDB } from "@/lib/mongodb";
 import PantryItem from "@/models/PantryItem";
 
-
-// GET all pantry items for logged-in user
+// GET all pantry items
 export async function GET() {
   try {
     await connectDB();
@@ -14,12 +13,8 @@ export async function GET() {
 
     if (!session?.user?.id) {
       return NextResponse.json(
-        {
-          message: "Unauthorized",
-        },
-        {
-          status: 401,
-        },
+        { message: "Unauthorized" },
+        { status: 401 }
       );
     }
 
@@ -30,26 +25,18 @@ export async function GET() {
     });
 
     return NextResponse.json(items);
-
   } catch (error) {
     console.error("GET Pantry Error:", error);
 
     return NextResponse.json(
-      {
-        message: "Failed to fetch pantry items",
-      },
-      {
-        status: 500,
-      },
+      { message: "Failed to fetch pantry items" },
+      { status: 500 }
     );
   }
 }
 
-
 // CREATE pantry item
-export async function POST(
-  request: NextRequest,
-) {
+export async function POST(request: NextRequest) {
   try {
     await connectDB();
 
@@ -57,15 +44,10 @@ export async function POST(
 
     if (!session?.user?.id) {
       return NextResponse.json(
-        {
-          message: "Unauthorized",
-        },
-        {
-          status: 401,
-        },
+        { message: "Unauthorized" },
+        { status: 401 }
       );
     }
-
 
     const body = await request.json();
 
@@ -74,55 +56,39 @@ export async function POST(
       category,
       quantity,
       unit,
-      expiryDate,
+      expirationDate,
     } = body;
-
 
     if (
       !name ||
       !category ||
       !quantity ||
-      !expiryDate
+      !expirationDate
     ) {
       return NextResponse.json(
-        {
-          message: "Missing required fields",
-        },
-        {
-          status: 400,
-        },
+        { message: "Missing required fields" },
+        { status: 400 }
       );
     }
-
 
     const item = await PantryItem.create({
       name,
       category,
       quantity,
-      unit: unit || "item",
-      expiryDate,
+      unit: unit || "pcs",
+      expirationDate,
       userId: session.user.id,
     });
 
-
-    return NextResponse.json(
-      item,
-      {
-        status: 201,
-      },
-    );
-
-
+    return NextResponse.json(item, {
+      status: 201,
+    });
   } catch (error) {
     console.error("POST Pantry Error:", error);
 
     return NextResponse.json(
-      {
-        message: "Failed to create pantry item",
-      },
-      {
-        status: 500,
-      },
+      { message: "Failed to create pantry item" },
+      { status: 500 }
     );
   }
 }

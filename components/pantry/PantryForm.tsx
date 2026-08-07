@@ -29,7 +29,7 @@ function SubmitButton({
     <button
       type="submit"
       disabled={pending}
-      className="w-full rounded-lg bg-green-600 py-3 font-medium text-white transition hover:bg-green-700 disabled:cursor-not-allowed disabled:opacity-50"
+      className="rounded-lg bg-green-600 px-6 py-3 font-medium text-white transition hover:bg-green-700 disabled:opacity-50"
     >
       {pending ? "Saving..." : text}
     </button>
@@ -46,18 +46,21 @@ export default function PantryForm({
   async function handleAction(formData: FormData) {
     setError("");
 
-    if (onSubmit) {
-      await onSubmit({
-        name: formData.get("name") as string,
-        category: formData.get("category") as string,
-        quantity: Number(formData.get("quantity")),
-        unit: formData.get("unit") as string,
-        expirationDate: formData.get("expirationDate") as string,
-      });
+    const data: PantryFormData = {
+      name: formData.get("name") as string,
+      category: formData.get("category") as string,
+      quantity: Number(formData.get("quantity")),
+      unit: formData.get("unit") as string,
+      expirationDate: formData.get("expirationDate") as string,
+    };
 
+    // Edit mode
+    if (onSubmit) {
+      await onSubmit(data);
       return;
     }
 
+    // Create mode
     const result = await createPantryItem(formData);
 
     if (result?.success === false) {
@@ -66,21 +69,18 @@ export default function PantryForm({
   }
 
   return (
-    <form
-      action={handleAction}
-      className="space-y-5 rounded-xl bg-white p-6 shadow-md"
-    >
+    <form action={handleAction} className="space-y-6">
       {error && (
-        <div
-          role="alert"
-          className="rounded-lg border border-red-300 bg-red-50 px-4 py-3 text-sm text-red-700"
-        >
+        <div className="rounded-lg bg-red-100 p-3 text-red-700">
           {error}
         </div>
       )}
 
       <div>
-        <label htmlFor="name" className="mb-2 block text-sm font-medium">
+        <label
+          htmlFor="name"
+          className="mb-2 block text-sm font-medium"
+        >
           Item Name
         </label>
 
@@ -95,7 +95,10 @@ export default function PantryForm({
       </div>
 
       <div>
-        <label htmlFor="category" className="mb-2 block text-sm font-medium">
+        <label
+          htmlFor="category"
+          className="mb-2 block text-sm font-medium"
+        >
           Category
         </label>
 
@@ -119,7 +122,10 @@ export default function PantryForm({
 
       <div className="grid gap-5 sm:grid-cols-2">
         <div>
-          <label htmlFor="quantity" className="mb-2 block text-sm font-medium">
+          <label
+            htmlFor="quantity"
+            className="mb-2 block text-sm font-medium"
+          >
             Quantity
           </label>
 
@@ -135,7 +141,10 @@ export default function PantryForm({
         </div>
 
         <div>
-          <label htmlFor="unit" className="mb-2 block text-sm font-medium">
+          <label
+            htmlFor="unit"
+            className="mb-2 block text-sm font-medium"
+          >
             Unit
           </label>
 
