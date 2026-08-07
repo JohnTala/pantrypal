@@ -1,6 +1,7 @@
 "use server";
 
 import { redirect } from "next/navigation";
+
 import { auth } from "@/auth";
 import { connectDB } from "@/lib/mongodb";
 import PantryItem from "@/models/PantryItem";
@@ -63,12 +64,6 @@ export async function createPantryItem(formData: FormData) {
       expirationDate: expiration,
       userId: session.user.id,
     });
-
-    return {
-      success: true,
-      message: "Pantry item created successfully.",
-    };
-
   } catch (error) {
     console.error("Create Pantry Item Error:", error);
 
@@ -78,5 +73,5 @@ export async function createPantryItem(formData: FormData) {
     };
   }
 
-  redirect("/pantry");
+  redirect("/dashboard");
 }

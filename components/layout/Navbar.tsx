@@ -5,19 +5,29 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { HiOutlineBars3, HiOutlineXMark } from "react-icons/hi2";
 
-const navLinks = [
+import LogoutButton from "@/components/auth/LogoutButton";
+
+interface NavbarProps {
+  user?: {
+    name?: string | null;
+    email?: string | null;
+  } | null;
+}
+
+export default function Navbar({ user }: NavbarProps) {
+  const pathname = usePathname();
+  const [isOpen, setIsOpen] = useState(false);
+
+ const navLinks = [
   { href: "/", label: "Home" },
   { href: "/dashboard", label: "Dashboard" },
   { href: "/pantry", label: "Pantry" },
   { href: "/reminders", label: "Reminders" },
+  { href: "/profile", label: "Profile" },
 ];
 
-export default function Navbar() {
-  const pathname = usePathname();
-
-  const [isOpen, setIsOpen] = useState(false);
-
   const isActive = (href: string) => pathname === href;
+  const showLogout = user && pathname !== "/";
 
   return (
     <header className="sticky top-0 z-50 border-b border-slate-200 bg-white shadow-sm">
@@ -47,21 +57,33 @@ export default function Navbar() {
           ))}
         </div>
 
-        {/* Desktop Authentication Buttons */}
+        {/* Desktop Authentication */}
         <div className="hidden items-center gap-3 md:flex">
-          <Link
-            href="/login"
-            className="rounded-md border border-green-600 px-4 py-2 text-sm font-medium text-green-600 transition hover:bg-green-50"
-          >
-            Login
-          </Link>
+          {user ? (
+            <>
+              <span className="text-sm text-slate-600">
+                Hi, {user.name ?? "User"}
+              </span>
 
-          <Link
-            href="/register"
-            className="rounded-md bg-green-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-green-700"
-          >
-            Register
-          </Link>
+              {showLogout && <LogoutButton />}
+            </>
+          ) : (
+            <>
+              <Link
+                href="/login"
+                className="rounded-md border border-green-600 px-4 py-2 text-sm font-medium text-green-600 transition hover:bg-green-50"
+              >
+                Login
+              </Link>
+
+              <Link
+                href="/register"
+                className="rounded-md bg-green-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-green-700"
+              >
+                Register
+              </Link>
+            </>
+          )}
         </div>
 
         {/* Mobile Menu Button */}
@@ -98,22 +120,34 @@ export default function Navbar() {
               </Link>
             ))}
 
-            <div className="mt-4 flex gap-3">
-              <Link
-                href="/login"
-                onClick={() => setIsOpen(false)}
-                className="flex-1 rounded-md border border-green-600 px-4 py-2 text-center text-sm font-medium text-green-600 transition hover:bg-green-50"
-              >
-                Login
-              </Link>
+            <div className="mt-4">
+              {user ? (
+                <>
+                  <p className="mb-3 text-center text-sm text-slate-600">
+                    Hi, {user.name ?? "User"}
+                  </p>
 
-              <Link
-                href="/register"
-                onClick={() => setIsOpen(false)}
-                className="flex-1 rounded-md bg-green-600 px-4 py-2 text-center text-sm font-medium text-white transition hover:bg-green-700"
-              >
-                Register
-              </Link>
+                  {showLogout && <LogoutButton />}
+                </>
+              ) : (
+                <div className="flex gap-3">
+                  <Link
+                    href="/login"
+                    onClick={() => setIsOpen(false)}
+                    className="flex-1 rounded-md border border-green-600 px-4 py-2 text-center text-sm font-medium text-green-600 hover:bg-green-50"
+                  >
+                    Login
+                  </Link>
+
+                  <Link
+                    href="/register"
+                    onClick={() => setIsOpen(false)}
+                    className="flex-1 rounded-md bg-green-600 px-4 py-2 text-center text-sm font-medium text-white hover:bg-green-700"
+                  >
+                    Register
+                  </Link>
+                </div>
+              )}
             </div>
           </div>
         </div>

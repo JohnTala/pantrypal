@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 
 import "./globals.css";
 
+import { auth } from "@/auth";
 import AuthProvider from "@/components/providers/AuthProvider";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
@@ -35,11 +36,13 @@ export const metadata: Metadata = {
   authors: [{ name: "PantryPal Team" }],
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const session = await auth();
+
   return (
     <html
       lang="en"
@@ -48,7 +51,7 @@ export default function RootLayout({
       <body className="min-h-screen bg-slate-50 text-slate-900">
         <AuthProvider>
           <div className="flex min-h-screen flex-col">
-            <Navbar />
+            <Navbar user={session?.user} />
 
             <main className="mx-auto w-full max-w-7xl flex-1 px-4 py-8 sm:px-6 lg:px-8">
               {children}

@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
-import { auth } from "@/auth";
 import { redirect } from "next/navigation";
+
+import { auth } from "@/auth";
 import { connectDB } from "@/lib/mongodb";
 import PantryItem from "@/models/PantryItem";
 
@@ -33,7 +34,7 @@ export default async function PantryPage() {
         </h1>
 
         <p className="mt-2 text-slate-600">
-          Manage your pantry items and track expiry dates.
+          Manage your pantry items and track expiration dates.
         </p>
       </div>
 
@@ -48,7 +49,7 @@ export default async function PantryPage() {
           {items.map((item) => (
             <div
               key={item._id.toString()}
-              className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm"
+              className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm transition hover:shadow-md"
             >
               <h2 className="text-xl font-semibold text-slate-800">
                 {item.name}
@@ -64,7 +65,7 @@ export default async function PantryPage() {
 
               <p className="mt-3 rounded-full bg-green-100 px-3 py-1 text-sm font-medium text-green-700">
                 Expires:{" "}
-                {new Date(item.expiryDate).toLocaleDateString()}
+                {new Date(item.expirationDate).toLocaleDateString()}
               </p>
             </div>
           ))}

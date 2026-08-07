@@ -32,12 +32,13 @@ export default async function RemindersPage() {
 
   const today = new Date();
 
-  const nextWeek = new Date();
+  const nextWeek = new Date(today);
   nextWeek.setDate(today.getDate() + 7);
 
   const reminders = (await PantryItem.find({
     userId: session.user.id,
     expirationDate: {
+      $gte: today,
       $lte: nextWeek,
     },
   })
@@ -59,7 +60,7 @@ export default async function RemindersPage() {
       {reminders.length === 0 ? (
         <div className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
           <p className="text-slate-500">
-             Excellent! There are no items expiring within the next week.
+            Excellent! There are no items expiring within the next week.
           </p>
         </div>
       ) : (
@@ -77,18 +78,16 @@ export default async function RemindersPage() {
 
             <tbody>
               {reminders.map((item) => {
-                const expiry = new Date(item.expirationDate);
+                const expiration = new Date(item.expirationDate);
 
                 const diffDays = Math.ceil(
-                  (expiry.getTime() - today.getTime()) /
+                  (expiration.getTime() - today.getTime()) /
                     (1000 * 60 * 60 * 24)
                 );
 
                 let status = "";
 
-                if (diffDays < 0) {
-                  status = `Expired ${Math.abs(diffDays)} day(s) ago`;
-                } else if (diffDays === 0) {
+                if (diffDays === 0) {
                   status = "Expires Today";
                 } else if (diffDays === 1) {
                   status = "Expires Tomorrow";
@@ -97,7 +96,7 @@ export default async function RemindersPage() {
                 }
 
                 return (
-                  <tr key={item._id} className="border-t">
+                  <tr key={item._id.toString()} className="border-t">
                     <td className="px-6 py-4 font-medium">
                       {item.name}
                     </td>
@@ -111,7 +110,7 @@ export default async function RemindersPage() {
                     </td>
 
                     <td className="px-6 py-4">
-                      {expiry.toLocaleDateString()}
+                      {expiration.toLocaleDateString()}
                     </td>
 
                     <td
@@ -133,7 +132,7 @@ export default async function RemindersPage() {
 
       <Link
         href="/pantry"
-        className="inline-block rounded-lg bg-green-600 px-6 py-3 font-medium text-white hover:bg-green-700"
+        className="inline-block rounded-lg bg-green-600 px-6 py-3 font-medium text-white transition hover:bg-green-700"
       >
         Back to Pantry
       </Link>

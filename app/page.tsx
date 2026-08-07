@@ -1,4 +1,3 @@
-
 import type { Metadata } from "next";
 import Link from "next/link";
 
@@ -8,9 +7,28 @@ export const metadata: Metadata = {
     "Welcome to PantryPal. Organize your pantry, track expiration dates, and reduce food waste with an easy-to-use pantry management application.",
 };
 
+const features = [
+  {
+    title: "Track Pantry Items",
+    description:
+      "Add, update, and organize all your pantry items in one convenient place.",
+  },
+  {
+    title: "Monitor Expiration Dates",
+    description:
+      "Stay ahead of expiration dates and reduce food waste with timely reminders.",
+  },
+  {
+    title: "Smart Dashboard",
+    description:
+      "View pantry insights, recent items, and key statistics from a single dashboard.",
+  },
+];
+
 export default async function HomePage() {
-   // Simulate a 2-second server delay
+  // Simulate a 2-second server delay
   await new Promise((resolve) => setTimeout(resolve, 2000));
+
   return (
     <section className="flex flex-col items-center justify-center py-16 text-center">
       <div className="max-w-3xl">
@@ -40,35 +58,39 @@ export default async function HomePage() {
         </div>
       </div>
 
+      
       {/* Features */}
-      <div className="mt-20 grid w-full max-w-6xl gap-8 md:grid-cols-3">
-        <div className="rounded-lg border bg-white p-6 shadow-sm">
-          <h2 className="mb-3 text-xl font-semibold text-green-600">
-            Track Pantry Items
-          </h2>
-          <p className="text-slate-600">
-            Keep all your pantry items organized in one place.
-          </p>
-        </div>
+          <div className="mt-20 w-full max-w-6xl">
+            <div className="mb-10 text-center">
+              <h2 className="text-3xl font-bold text-slate-900">
+                Why Choose PantryPal?
+              </h2>
 
-        <div className="rounded-lg border bg-white p-6 shadow-sm">
-          <h2 className="mb-3 text-xl font-semibold text-green-600">
-            Monitor Expiration Dates
-          </h2>
-          <p className="text-slate-600">
-            Know exactly which items are expiring soon to reduce waste.
-          </p>
-        </div>
+              <p className="mx-auto mt-3 max-w-2xl text-slate-600">
+                PantryPal provides the tools you need to organize your pantry,
+                monitor food freshness, and reduce unnecessary waste. Everything
+                is designed to make managing your household inventory simple and
+                efficient.
+              </p>
+            </div>
 
-        <div className="rounded-lg border bg-white p-6 shadow-sm">
-          <h2 className="mb-3 text-xl font-semibold text-green-600">
-            Smart Dashboard
-          </h2>
-          <p className="text-slate-600">
-            View pantry statistics and important reminders at a glance.
-          </p>
-        </div>
-      </div>
+            <div className="grid gap-8 md:grid-cols-3">
+              {features.map((feature) => (
+                <div
+                  key={feature.title}
+                  className="rounded-lg border bg-white p-6 shadow-sm transition hover:-translate-y-1 hover:shadow-md"
+                >
+                  <h2 className="mb-3 text-xl font-semibold text-green-600">
+                    {feature.title}
+                  </h2>
+
+                  <p className="text-slate-600">
+                    {feature.description}
+                  </p>
+                </div>
+              ))}
+            </div>
+          </div>
     </section>
   );
 }

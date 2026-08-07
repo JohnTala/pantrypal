@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
-import PantryForm from "@/components/pantry/PantryForm";
-import { auth } from "@/auth";
 import { redirect } from "next/navigation";
+
+import { auth } from "@/auth";
+import PantryForm from "@/components/pantry/PantryForm";
 
 export const metadata: Metadata = {
   title: "Add Pantry Item",
@@ -12,7 +13,7 @@ export const metadata: Metadata = {
 export default async function NewPantryItemPage() {
   const session = await auth();
 
-  if (!session) {
+  if (!session?.user?.id) {
     redirect("/login");
   }
 
@@ -24,7 +25,7 @@ export default async function NewPantryItemPage() {
         </h1>
 
         <p className="mt-2 text-slate-600">
-          Add a new food item to your pantry and track its expiry date.
+          Add a new food item to your pantry and track its expiration date.
         </p>
       </div>
 

@@ -8,33 +8,30 @@ const authConfig: NextAuthConfig = {
   },
 
   callbacks: {
-    authorized({ auth, request: { nextUrl } }) {
-      const isLoggedIn = !!auth?.user;
+  authorized({ auth, request: { nextUrl } }) {
+    const isLoggedIn = !!auth?.user;
 
-      const isProtected =
-        nextUrl.pathname.startsWith("/dashboard") ||
-        nextUrl.pathname.startsWith("/pantry") ||
-        nextUrl.pathname.startsWith("/profile") ||
-        nextUrl.pathname.startsWith("/reminders");
+    const isProtected =
+      nextUrl.pathname.startsWith("/dashboard") ||
+      nextUrl.pathname.startsWith("/pantry") ||
+      nextUrl.pathname.startsWith("/profile") ||
+      nextUrl.pathname.startsWith("/reminders");
 
-      if (isProtected) {
-        return isLoggedIn;
-      }
+    if (isProtected && !isLoggedIn) {
+      return false;
+    }
 
-      // Prevent logged-in users from returning to login or register
-      if (
-        isLoggedIn &&
-        (nextUrl.pathname === "/login" ||
-          nextUrl.pathname === "/register")
-      ) {
-        return Response.redirect(
-          new URL("/dashboard", nextUrl)
-        );
-      }
+    if (
+      isLoggedIn &&
+      (nextUrl.pathname === "/login" ||
+        nextUrl.pathname === "/register")
+    ) {
+      return Response.redirect(new URL("/dashboard", nextUrl));
+    }
 
-      return true;
-    },
+    return true;
   },
+},
 };
 
 export default authConfig;
