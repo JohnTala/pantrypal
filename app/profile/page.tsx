@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { auth } from "@/auth";
+import ProfileForm from "./ProfileForm";
 
 export const metadata: Metadata = {
   title: "Profile",
@@ -17,35 +18,16 @@ export default async function ProfilePage() {
 
   return (
     <section className="mx-auto max-w-3xl p-6">
-      <h1 className="text-3xl font-bold text-green-600">
-        Profile
-      </h1>
+      <h1 className="text-3xl font-bold text-green-800">Profile</h1>
 
       <p className="mt-2 text-slate-600">
-        Manage your PantryPal account information.
+        Manage your PantryPal account information and settings.
       </p>
 
-      <div className="mt-6 rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
-        <div className="space-y-6">
-          <div>
-            <p className="text-sm font-medium text-slate-500">
-              Name
-            </p>
-            <p className="text-lg">
-              {session.user.name ?? "Not provided"}
-            </p>
-          </div>
-
-          <div>
-            <p className="text-sm font-medium text-slate-500">
-              Email
-            </p>
-            <p className="text-lg">
-              {session.user.email ?? "Not provided"}
-            </p>
-          </div>
-        </div>
-      </div>
+      <ProfileForm
+        initialName={session.user.name ?? ""}
+        initialEmail={session.user.email ?? ""}
+      />
     </section>
   );
 }
